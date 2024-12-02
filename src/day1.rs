@@ -30,9 +30,9 @@ pub fn part2(input: &str) -> u32 {
         if i % 2 == 0 {
             left.push(num);
         } else {
-            match map.get(&num) {
+            match map.get_mut(&num) {
                 Some(count) => {
-                    map.insert(num, count + 1);
+                    *count += 1;
                 }
                 None => {
                     map.insert(num, 1);
