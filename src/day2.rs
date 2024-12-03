@@ -1,87 +1,36 @@
-use std::arch::x86_64::*;
 use std::{
     cmp::{max, min},
     collections::{BinaryHeap, HashMap},
 };
 
-fn is_valid_sequence_simd_u8(l: &[u8], ascending: bool, dampener: bool) -> bool {
-    if l.len() < 2 {
-        return true;
-    }
-
-    let mut padded = [0u8; 16];
-    padded[..l.len()].copy_from_slice(l);
-
-    unsafe {
-        let current = _mm_loadu_si128(padded.as_ptr() as *const __m128i);
-
-        let next = _mm_srli_si128(current, 1);
-
-        let diff = if ascending {
-            _mm_sub_epi8(next, current)
-        } else {
-            _mm_sub_epi8(current, next)
-        };
-
-        let zero = _mm_set1_epi8(0);
-        let three = _mm_set1_epi8(3);
-
-        let cmp_positive = if ascending {
-            _mm_cmpgt_epi8(diff, zero)
-        } else {
-            _mm_cmpgt_epi8(zero, diff)
-        };
-
-        let cmp_within_bound = {
-            let cmp_greater_than_three = _mm_cmpgt_epi8(diff, three);
-            _mm_andnot_si128(cmp_greater_than_three, _mm_set1_epi8(-1))
-        };
-
-        let valid_mask = _mm_and_si128(cmp_positive, cmp_within_bound);
-
-        let invalid_mask = _mm_xor_si128(valid_mask, _mm_set1_epi8(-1));
-        let invalid_bits = _mm_movemask_epi8(invalid_mask);
-
-        if invalid_bits == 0 {
-            return true;
-        } else if !dampener {
-            return false;
-        }
-
-        let mut invalid_indices = Vec::new();
-        for i in 0..l.len() - 1 {
-            if (invalid_bits & (1 << i)) != 0 {
-                invalid_indices.push(i);
-            }
-        }
-
-        if invalid_indices.len() <= 2 {
-            for &remove_index in &invalid_indices {
-                let mut adjusted = Vec::with_capacity(l.len() - 1);
-                adjusted.extend_from_slice(&l[..remove_index]);
-                adjusted.extend_from_slice(&l[remove_index + 1..]);
-
-                if is_valid_sequence_simd_u8(&adjusted, ascending, false) {
-                    return true;
-                }
-            }
-        }
-    }
-    false
-}
-
 #[aoc(day2, part1)]
 pub fn part1(input: &str) -> u32 {
     let mut res: u32 = 0;
+    let mut ok;
     for line in input.lines() {
-        let l: Vec<u8> = line
+        let l: Vec<u32> = line
             .split_whitespace()
             .map(|e| e.parse().unwrap())
             .collect();
-
-        if is_valid_sequence_simd_u8(&l, true, false) {
+        if l.len() == 1 {
             res += 1;
-        } else if is_valid_sequence_simd_u8(&l, true, false) {
+        }
+        let ascend = l[0] < l[1];
+        ok = true;
+        if ascend {
+            for i in 1..l.len() {
+                if l[i - 1] >= l[i] || l[i] - l[i - 1] > 3 {
+                    ok = false;
+                }
+            }
+        } else {
+            for i in 1..l.len() {
+                if l[i - 1] <= l[i] || l[i - 1] - l[i] > 3 {
+                    ok = false;
+                }
+            }
+        }
+        if ok {
             res += 1;
         }
     }
@@ -91,14 +40,87 @@ pub fn part1(input: &str) -> u32 {
 #[aoc(day2, part2)]
 pub fn part2(input: &str) -> u32 {
     let mut res: u32 = 0;
+    let mut ok_desc;
+    let mut ok_asc;
+    let mut damp_asc;
+    let mut damp_desc;
+    let mut i;
     for line in input.lines() {
-        let l: Vec<u8> = line
+        let l: Vec<u32> = line
             .split_whitespace()
             .map(|e| e.parse().unwrap())
             .collect();
-        if is_valid_sequence_simd_u8(&l, true, true) {
+        if l.len() == 1 {
             res += 1;
-        } else if is_valid_sequence_simd_u8(&l, true, true) {
+        }
+        ok_asc = true;
+        ok_desc = true;
+        damp_asc = false;
+        damp_desc = false;
+        i = 1;
+        while i < l.len() {
+            if ok_asc && l[i - 1] >= l[i] || l[i] - l[i - 1] > 3 {
+                if !damp_asc {
+                    damp_asc = true;
+                    if i == l.len() - 1 {
+                        break;
+                    }
+                    let mut inner_ok = false;
+                    let lower = min(i, 2);
+                    for j in (i - lower..=i).rev() {
+                        if j == 0 {
+                            i = j + 1;
+                            inner_ok = true;
+                            break;
+                        } else if !(l[j - 1] >= l[j + 1] || l[j + 1] - l[j - 1] > 3) {
+                            i = j + 1;
+                            inner_ok = true;
+                            break;
+                        }
+                    }
+                    if !inner_ok {
+                        ok_asc = false;
+                        break;
+                    }
+                } else {
+                    ok_asc = false;
+                    break;
+                }
+            }
+            i += 1;
+        }
+        i = 1;
+        while i < l.len() {
+            if ok_desc && l[i - 1] <= l[i] || l[i - 1] - l[i] > 3 {
+                if !damp_desc {
+                    damp_desc = true;
+                    if i == l.len() - 1 {
+                        break;
+                    }
+                    let mut inner_ok = false;
+                    let lower = min(i, 2);
+                    for j in (i - lower..=i).rev() {
+                        if j == 0 {
+                            i = j + 1;
+                            inner_ok = true;
+                            break;
+                        } else if !(l[j - 1] <= l[j + 1] || l[j - 1] - l[j + 1] > 3) {
+                            i = j + 1;
+                            inner_ok = true;
+                            break;
+                        }
+                    }
+                    if !inner_ok {
+                        ok_desc = false;
+                        break;
+                    }
+                } else {
+                    ok_desc = false;
+                }
+            }
+            i += 1;
+        }
+        if ok_asc || ok_desc {
             res += 1;
         }
     }
