@@ -6,6 +6,40 @@ use std::{
 #[aoc(day2, part1)]
 pub fn part1(input: &str) -> u32 {
     let mut res: u32 = 0;
+    let mut ok;
+    for line in input.lines() {
+        let l: Vec<u32> = line
+            .split_whitespace()
+            .map(|e| e.parse().unwrap())
+            .collect();
+        if l.len() == 1 {
+            res += 1;
+        }
+        let ascend = l[0] < l[1];
+        ok = true;
+        if ascend {
+            for i in 1..l.len() {
+                if l[i - 1] >= l[i] || l[i] - l[i - 1] > 3 {
+                    ok = false;
+                }
+            }
+        } else {
+            for i in 1..l.len() {
+                if l[i - 1] <= l[i] || l[i - 1] - l[i] > 3 {
+                    ok = false;
+                }
+            }
+        }
+        if ok {
+            res += 1;
+        }
+    }
+    res
+}
+
+#[aoc(day2, part2)]
+pub fn part2(input: &str) -> u32 {
+    let mut res: u32 = 0;
     let mut ok_desc;
     let mut ok_asc;
     let mut damp_asc;
