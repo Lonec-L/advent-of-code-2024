@@ -1,7 +1,4 @@
-use std::{
-    cmp::{max, min},
-    collections::{BinaryHeap, HashMap},
-};
+use std::cmp::min;
 
 #[aoc(day2, part1)]
 pub fn part1(input: &str) -> u32 {

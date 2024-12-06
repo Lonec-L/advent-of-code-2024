@@ -1,5 +1,4 @@
 use regex::Regex;
-use std::collections::{BinaryHeap, HashMap};
 
 #[aoc(day3, part1)]
 pub fn part1(input: &str) -> u32 {
