@@ -1,4 +1,3 @@
-use std::process::exit;
 
 fn solve_p1(r: i64, c: i64, k: usize, values: &Vec<i64>, concat: bool) -> bool {
     if k == values.len() {
