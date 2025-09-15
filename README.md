@@ -1,5 +1,5 @@
 # advent-of-rust-2024
-Advent of code 2024, in Rust.
+Advent of code 2024, in Rust (and Zig).
 
 <!--- advent_readme_stars table --->
 ## 2024 Results
