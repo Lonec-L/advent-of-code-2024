@@ -1,0 +1,22 @@
+[
+  {
+    "arguments": [
+      "/usr/bin/gcc",
+      "-c",
+      "-Iinclude",
+      "src/13.c"
+    ],
+    "directory": "/Users/lonec/personal/advent-of-code-2024/c",
+    "file": "/Users/lonec/personal/advent-of-code-2024/c/src/13.c"
+  },
+  {
+    "arguments": [
+      "/usr/bin/gcc",
+      "-c",
+      "-Iinclude",
+      "src/math_utils.c"
+    ],
+    "directory": "/Users/lonec/personal/advent-of-code-2024/c",
+    "file": "/Users/lonec/personal/advent-of-code-2024/c/src/math_utils.c"
+  }
+]
