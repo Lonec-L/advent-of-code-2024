@@ -2,3 +2,6 @@ in
 in_small
 .cache
 a.out
+.DS_Store
+*/.DS_Store
+**/.DS_Store
