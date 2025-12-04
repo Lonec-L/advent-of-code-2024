@@ -1,39 +1,18 @@
-all: 13 14 15
+CC = gcc
+INC = -Iinclude
+SRC_DIR = src
+BUILD_DIR = build
 
-13: build13 run13
-14: build14 run14
-15: build15 run15
-16: build16 run16
+.PHONY: clean
 
-build13:
-	gcc -Iinclude src/13.c -o ./build/13.out
-
-run13:
-	@echo "day 13:"
-	./build/13.out
-
-build14:
-	gcc -Iinclude src/14.c -o ./build/14.out
-
-run14:
-	@echo "day 14:"
-	./build/14.out
-
-build15:
-	gcc -Iinclude src/15.c -o ./build/15.out
-
-run15:
-	@echo "day 15:"
-	./build/15.out
-
-build16:
-	gcc -Iinclude src/16.c -o ./build/16.out
-
-run16:
-	@echo "day 16:"
-	./build/16.out
-
-
+%:
+	@mkdir -p $(BUILD_DIR)
+	@if [ ! -f $(SRC_DIR)/$@.c ]; then \
+		echo "Error: $(SRC_DIR)/$@.c not found"; exit 1; \
+	fi
+	@echo "day $@:"
+	@$(CC) $(INC) $(SRC_DIR)/$@.c -o $(BUILD_DIR)/$@.out
+	@./$(BUILD_DIR)/$@.out
 
 clean:
-	rm -rf ./build/*.out
+	rm -rf $(BUILD_DIR)/*.out
