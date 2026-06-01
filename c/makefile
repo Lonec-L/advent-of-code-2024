@@ -2,6 +2,7 @@ CC = gcc
 INC = -Iinclude
 SRC_DIR = src
 BUILD_DIR = build
+FLAGS = -O2
 
 .PHONY: clean
 
@@ -11,7 +12,7 @@ BUILD_DIR = build
 		echo "Error: $(SRC_DIR)/$@.c not found"; exit 1; \
 	fi
 	@echo "day $@:"
-	@$(CC) $(INC) $(SRC_DIR)/$@.c -o $(BUILD_DIR)/$@.out
+	@$(CC) $(FLAGS) $(INC) $(SRC_DIR)/$@.c -o $(BUILD_DIR)/$@.out
 	@./$(BUILD_DIR)/$@.out
 
 clean:
