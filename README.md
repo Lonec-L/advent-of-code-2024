@@ -27,4 +27,5 @@ Since 1st of October 2025, I am trying to finish last years AOC challenges in C.
 | [Day 16](https://adventofcode.com/2024/day/16) | ⭐ | ⭐ |
 | [Day 17](https://adventofcode.com/2024/day/17) | ⭐ | ⭐ |
 | [Day 18](https://adventofcode.com/2024/day/18) | ⭐ | ⭐ |
+| [Day 19](https://adventofcode.com/2024/day/19) | ⭐ | ⭐ |
 <!--- advent_readme_stars table --->
